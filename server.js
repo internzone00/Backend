@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: https://internzone-frontend.onrender.com,
+  origin: process.env.FRONTEND_URL,
   optionsSuccessStatus: 200
 }));
 app.use(express.json());
@@ -46,8 +46,8 @@ app.post('/initiate-payment', async (req, res) => {
       firstname,
       email,
       phone: phone || '',
-      surl: `https://internzone-backend.onrender.com/verify/${txnid}`,
-      furl: `https://internzone-backend.onrender.com/verify/${txnid}`,
+      surl: `${process.env.BACKEND_URL}/verify/${txnid}`,
+      furl: `${process.env.BACKEND_URL}/verify/${txnid}`,
       udf1: serviceDuration || '1-Month',
       udf2: "",
       udf3: "",
@@ -121,13 +121,13 @@ app.all('/verify/:txnid', async (req, res) => {
 
     // Redirect based on status
     const redirectUrl = status === 'success' 
-      ? `https://internzone-frontend.onrender.com/payment-success?txnid=${txnid}&duration=${encodeURIComponent(duration)}`
-      : `https://internzone-frontend.onrender.com/payment-failed?txnid=${txnid}`;
+      ? `${process.env.FRONTEND_URL}/payment-success?txnid=${txnid}&duration=${encodeURIComponent(duration)}`
+      : `${process.env.FRONTEND_URL}/payment-failed?txnid=${txnid}`;
 
     res.redirect(redirectUrl);
   } catch (error) {
     console.error('Verification error:', error);
-    res.redirect(`https://internzone-frontend.onrender.com/payment-error`);
+    res.redirect(`${process.env.FRONTEND_URL}/payment-error`);
   }
 });
 
